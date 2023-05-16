@@ -6,7 +6,7 @@ on:
 env:
   DST_REGISTRY: ghcr.io
   DST_IMAGE_NAME: ${{ github.repository }}
-  
+
   SRC_REGISTRY: docker.io
   SRC_IMAGE_NAME: alpine
   SRC_USERNAME: belcebus
@@ -30,7 +30,7 @@ jobs:
           docker pull ${{env.SRC_REGISTRY}}/${{env.SRC_IMAGE_NAME}}:latest
           docker images        
 
-      - name: Retag ${{ env.SRC_REGISTRY }}/${{env.SRC_IMAGE_NAME}}:latest
+      - name: Retag ${{ env.SRC_REGISTRY }}/${{env.SRC_IMAGE_NAME}}:latest to ${{ env.DST_REGISTRY }}/${{env.DST_IMAGE_NAME}}:1.0.0
         run: |
           docker tag ${{ env.SRC_REGISTRY }}/${{env.SRC_IMAGE_NAME}}:latest ${{ env.DST_REGISTRY }}/${{env.DST_IMAGE_NAME}}:1.0.0
       
