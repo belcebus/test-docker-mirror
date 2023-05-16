@@ -32,28 +32,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
-        with:
-          registry: ${{ env.SRC_REGISTRY }}
-          username: belcebus
-          password: ${{ secrets.DOCKER_HUB_PASS }}
       
       - name: Docker pull image
-        run: docker pull ${{env.SRC_REGISTRY}}/${{env.SRC_IMAGE_NAME}}
-        
-
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-
+        run: |
+          echo ${{ secrets.DOCKER_HUB_PASS }} | docker login -u belcebus --password-stdin docker.io
+          docker pull ${{env.SRC_REGISTRY}}/${{env.SRC_IMAGE_NAME}}:latest
+          docker images        
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
@@ -69,10 +53,6 @@ jobs:
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      
+          push: true
+          tags: ${{ env.DST_IMAGE_NAME }}
       
