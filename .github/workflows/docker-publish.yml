@@ -4,12 +4,11 @@ on:
   workflow_dispatch:
   
 env:
-  # Use docker.io for Docker Hub if empty
   DST_REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
   DST_IMAGE_NAME: ${{ github.repository }}
   SRC_REGISTRY: docker.io
   SRC_IMAGE_NAME: alpine
+  SRC_USERNAME: belcebus
 
 jobs:
   build:
@@ -26,7 +25,7 @@ jobs:
       
       - name: Log into registry ${{ env.SRC_REGISTRY }}
         run: |
-          echo ${{ secrets.DOCKER_HUB_PASS }} | docker login -u belcebus --password-stdin ${{ env.SRC_REGISTRY}}
+          echo ${{ secrets.DOCKER_HUB_PASS }} | docker login -u ${{ env.SRC_USERNAME }} --password-stdin ${{ env.SRC_REGISTRY}}
           docker pull ${{env.SRC_REGISTRY}}/${{env.SRC_IMAGE_NAME}}:latest
           docker images        
 
